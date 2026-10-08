@@ -41,10 +41,18 @@ export default function RegisterScreen({ navigation }) {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: theme.spacing.lg, justifyContent: 'center' },
+  container: { flex: 1, padding: theme.spacing.lg, justifyContent: 'center', backgroundColor: theme.colors.background },
   title: { ...theme.typography.h2, color: theme.colors.primary, textAlign: 'center', marginBottom: theme.spacing.xl },
-  input: { borderWidth: 1, borderColor: theme.colors.border, borderRadius: theme.radius.sm, padding: theme.spacing.md, marginBottom: theme.spacing.md },
+  input: {
+    backgroundColor: theme.colors.surface,
+    borderWidth: 1,
+    borderColor: theme.colors.border,
+    borderRadius: theme.radius.sm,
+    padding: theme.spacing.md,
+    marginBottom: theme.spacing.md,
+    color: theme.colors.textPrimary,
+  },
   button: { backgroundColor: theme.colors.primary, borderRadius: theme.radius.sm, paddingVertical: 14, alignItems: 'center', marginTop: theme.spacing.sm },
   buttonText: { color: theme.colors.white, fontWeight: '600' },
-  link: { color: theme.colors.primary, textAlign: 'center', marginTop: theme.spacing.md },
+  link: { color: theme.colors.primaryLight || theme.colors.primary, textAlign: 'center', marginTop: theme.spacing.md, fontWeight: '600' },
 });

@@ -23,8 +23,21 @@ export default function CustomerTabs() {
     <Tab.Navigator
       screenOptions={({ route }) => ({
         headerShown: true,
-        tabBarActiveTintColor: theme.colors.primary,
+        headerStyle: {
+          backgroundColor: theme.colors.surface,
+          shadowColor: theme.colors.navy,
+          elevation: 2,
+        },
+        headerTitleStyle: {
+          color: theme.colors.primary,
+          fontWeight: '700',
+        },
+        tabBarActiveTintColor: theme.colors.primaryLight || theme.colors.primary,
         tabBarInactiveTintColor: theme.colors.textSecondary,
+        tabBarStyle: {
+          backgroundColor: theme.colors.surface,
+          borderTopColor: theme.colors.border,
+        },
         tabBarIcon: ({ color, size }) => (
           <Ionicons name={ICONS[route.name]} color={color} size={size} />
         ),

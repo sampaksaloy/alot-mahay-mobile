@@ -4,9 +4,13 @@ import { theme } from '../core/theme/theme';
 
 export default function Button({ label, onPress, loading = false, variant = 'primary', style }) {
   const bg = variant === 'primary' ? theme.colors.primary
+    : variant === 'secondary' ? theme.colors.secondary
+    : variant === 'royalBlue' ? (theme.colors.royalBlue || theme.colors.primaryLight)
     : variant === 'danger' ? theme.colors.danger
     : theme.colors.surface;
-  const textColor = variant === 'outline' ? theme.colors.primary : theme.colors.white;
+  const textColor = variant === 'outline' ? theme.colors.primary
+    : variant === 'secondary' ? theme.colors.primary
+    : theme.colors.white;
 
   return (
     <TouchableOpacity

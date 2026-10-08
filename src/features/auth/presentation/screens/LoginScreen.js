@@ -105,7 +105,7 @@ export default function LoginScreen({ navigation }) {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: theme.spacing.lg, justifyContent: 'center' },
+  container: { flex: 1, padding: theme.spacing.lg, justifyContent: 'center', backgroundColor: theme.colors.background },
   logo: {
     width: 100,
     height: 100,
@@ -121,7 +121,15 @@ const styles = StyleSheet.create({
     marginBottom: theme.spacing.xs,
   },
   title: { ...theme.typography.h2, color: theme.colors.primary, textAlign: 'center', marginBottom: theme.spacing.xl },
-  input: { borderWidth: 1, borderColor: theme.colors.border, borderRadius: theme.radius.sm, padding: theme.spacing.md, marginBottom: theme.spacing.md },
+  input: {
+    backgroundColor: theme.colors.surface,
+    borderWidth: 1,
+    borderColor: theme.colors.border,
+    borderRadius: theme.radius.sm,
+    padding: theme.spacing.md,
+    marginBottom: theme.spacing.md,
+    color: theme.colors.textPrimary,
+  },
   optionsRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -138,18 +146,30 @@ const styles = StyleSheet.create({
     marginRight: 8,
     alignItems: 'center',
     justifyContent: 'center',
+    backgroundColor: theme.colors.surface,
   },
   checkboxChecked: {
     backgroundColor: theme.colors.primary,
     borderColor: theme.colors.primary,
   },
   checkmark: { color: theme.colors.white, fontSize: 13, fontWeight: 'bold' },
-  rememberText: { color: theme.colors.text || '#333' },
-  forgotLink: { color: theme.colors.primary },
-  button: { backgroundColor: theme.colors.primary, borderRadius: theme.radius.sm, paddingVertical: 14, alignItems: 'center', marginTop: theme.spacing.sm },
+  rememberText: { color: theme.colors.textPrimary },
+  forgotLink: { color: theme.colors.primaryLight || theme.colors.primary, fontWeight: '600' },
+  button: {
+    backgroundColor: theme.colors.primary,
+    borderRadius: theme.radius.sm,
+    paddingVertical: 14,
+    alignItems: 'center',
+    marginTop: theme.spacing.sm,
+  },
   buttonText: { color: theme.colors.white, fontWeight: '600' },
-  link: { color: theme.colors.primary, textAlign: 'center', marginTop: theme.spacing.md },
-   dividerRow: {
+  link: {
+    color: theme.colors.primaryLight || theme.colors.primary,
+    textAlign: 'center',
+    marginTop: theme.spacing.md,
+    fontWeight: '600',
+  },
+  dividerRow: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
@@ -161,7 +181,7 @@ const styles = StyleSheet.create({
   },
   dividerText: {
     marginHorizontal: theme.spacing.sm,
-    color: '#000000',
+    color: theme.colors.textSecondary,
     fontSize: 13,
     fontWeight: '500',
   },
@@ -175,6 +195,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
+    backgroundColor: theme.colors.surface,
     borderWidth: 1,
     borderColor: theme.colors.border,
     borderRadius: theme.radius.sm,
@@ -184,5 +205,5 @@ const styles = StyleSheet.create({
   },
   socialIcon: { width: 18, height: 18, marginRight: 8 },
   socialIconText: { fontSize: 18, fontWeight: 'bold', marginRight: 8 },
-  socialText: { fontWeight: '500', color: theme.colors.text || '#333' },
+  socialText: { fontWeight: '500', color: theme.colors.textPrimary },
 });
