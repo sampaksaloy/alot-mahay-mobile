@@ -1,49 +1,48 @@
 export const COLORS = {
-  // Brand Identity Palette: Royal Blue & Gold
-  navy: '#0B2D5B',         // Deep Royal Navy
-  royalBlue: '#1E63D6',    // Royal Blue / Cobalt
-  gold: '#D4AF37',         // Metallic Gold
-  cream: '#F8F7EF',        // Off-White / Ivory
+  // Core 3-Color Brand Palette
+  navy: '#0B2D5B',         // Deep Navy Blue
+  royalBlue: '#1E63D6',    // Royal Blue
+  white: '#FFFFFF',        // Pure White
 
-  // Semantic Palette Tokens
-  primary: '#0B2D5B',      // Deep Royal Navy as primary brand color
-  primaryDark: '#071F3F',
-  primaryLight: '#1E63D6', // Vibrant Royal Blue
-  secondary: '#D4AF37',    // Gold Accent
-  secondaryDark: '#B89628',
-  accent: '#1E63D6',       // Royal Blue Accent
+  // Semantic Tokens
+  primary: '#0B2D5B',      // Navy Blue
+  primaryDark: '#061C3B',  // Dark Navy
+  primaryLight: '#1E63D6', // Royal Blue
+  secondary: '#1E63D6',    // Royal Blue
+  secondaryDark: '#0B2D5B',
+  accent: '#1E63D6',       // Royal Blue
 
   // Background & Surfaces
-  background: '#F8F7EF',   // Soft Cream / Off-White background from palette
-  surface: '#FFFFFF',      // Pure White cards and surfaces
-  card: '#FFFFFF',
+  background: '#F4F7FB',   // Clean ultra-light ice blue / off-white
+  surface: '#FFFFFF',      // Pure White
+  card: '#FFFFFF',         // Pure White
 
   // Typography
   text: '#0B2D5B',
-  textPrimary: '#0B2D5B',  // High contrast Deep Navy text
-  textSecondary: '#5A6E85', // Sophisticated Slate Navy text
-  textMuted: '#8E9DAE',
+  textPrimary: '#0B2D5B',  // Navy Blue
+  textSecondary: '#475569', // Slate Navy
+  textMuted: '#94A3B8',
 
   // Borders
-  border: '#DFDACF',       // Warm subtle border matching cream tone
-  borderFocus: '#1E63D6',
+  border: '#E2E8F0',       // Crisp subtle border
+  borderFocus: '#1E63D6',  // Royal Blue
 
-  // Status & Utility Colors
-  success: '#2E7D32',
-  danger: '#D32F2F',
-  warning: '#D4AF37',      // Gold
+  // Status & Utility Colors (cohesive blue & white theme)
+  success: '#1E63D6',      // Royal Blue with white icon
+  danger: '#DC2626',       // Red for critical actions
+  warning: '#0B2D5B',      // Navy
   info: '#1E63D6',         // Royal Blue
-  white: '#FFFFFF',
   black: '#000000',
 
-  // Queue Status Colors
+  // Queue Status Colors (Blue & White focus)
   status: {
-    WAITING: '#8E9DAE',
-    CALLED: '#D4AF37',     // Gold for Called
-    IN_SERVICE: '#1E63D6', // Royal Blue for In Service
-    COMPLETED: '#2E7D32',  // Emerald Green
-    CANCELLED: '#D32F2F',  // Red
-    SKIPPED: '#728090',    // Slate
+    WAITING: '#475569',    // Slate Navy
+    CALLED: '#0B2D5B',     // Deep Navy
+    IN_SERVICE: '#1E63D6', // Royal Blue
+    COMPLETED: '#0B2D5B',  // Deep Navy
+    CANCELLED: '#94A3B8',  // Muted Slate
+    SKIPPED: '#64748B',    // Slate
   },
 };
+
 

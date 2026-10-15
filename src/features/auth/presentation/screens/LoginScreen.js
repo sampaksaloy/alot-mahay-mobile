@@ -1,19 +1,29 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, Image } from 'react-native';
+import {
+  View, Text, TextInput, TouchableOpacity, StyleSheet,
+  Image, KeyboardAvoidingView, Platform, ScrollView,
+} from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 import { useAuth } from '../hooks/useAuth';
 import { ROLES } from '../../../../core/constants/strings';
 import { theme } from '../../../../core/theme/theme';
+import Button from '../../../../components/Button';
 
 export default function LoginScreen({ navigation }) {
-  const { login, loading, error } = useAuth();
+  const { login, loading } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [rememberMe, setRememberMe] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [error, setError] = useState('');
 
   const handleLogin = async () => {
-    const user = await login(email, password, rememberMe);
+    setError('');
+    if (!email.trim()) { setError('Please enter your email'); return; }
+    if (!password) { setError('Please enter your password'); return; }
+
+    const user = await login(email, password);
     if (!user) {
-      Alert.alert('', error || 'Wrong email or password.');
+      setError('Wrong email or password.');
       return;
     }
 
@@ -22,188 +32,231 @@ export default function LoginScreen({ navigation }) {
     else navigation.replace('CustomerStack');
   };
 
-  const handleGoogleLogin = () => {
-    Alert.alert('', 'Google login coming soon.');
-  };
-
-  const handleFacebookLogin = () => {
-    Alert.alert('', 'Facebook login coming soon.');
-  };
-
   return (
-    <View style={styles.container}>
-      <Image
-        source={require('../../../../../assets/images/logo.jpg')}
-        style={styles.logo}
-      />
-      <Text style={styles.appName}>Alot Mahay Queue</Text>
-      <Text style={styles.title}>Welcome! Please Login Here</Text>
-
-      <TextInput
-        style={styles.input}
-        placeholder="Email"
-        keyboardType="email-address"
-        autoCapitalize="none"
-        value={email}
-        onChangeText={setEmail}
-      />
-      <TextInput
-        style={styles.input}
-        placeholder="Password"
-        secureTextEntry
-        value={password}
-        onChangeText={setPassword}
-      />
-
-      <View style={styles.optionsRow}>
-        <TouchableOpacity
-          style={styles.rememberContainer}
-          onPress={() => setRememberMe(!rememberMe)}
-          activeOpacity={0.7}
-        >
-          <View style={[styles.checkbox, rememberMe && styles.checkboxChecked]}>
-            {rememberMe && <Text style={styles.checkmark}>✓</Text>}
-          </View>
-          <Text style={styles.rememberText}>Remember Me</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity onPress={() => navigation.navigate('ForgotPassword')}>
-          <Text style={styles.forgotLink}>Forgot Password?</Text>
-        </TouchableOpacity>
-      </View>
-
-      <TouchableOpacity style={styles.button} onPress={handleLogin} disabled={loading}>
-        <Text style={styles.buttonText}>{loading ? 'Please wait...' : 'Login'}</Text>
-      </TouchableOpacity>
-
-      <TouchableOpacity onPress={() => navigation.navigate('Register')}>
-        <Text style={styles.link}>Wala pay account boss? Register dinhi</Text>
-      </TouchableOpacity>
-
-      <View style={styles.dividerRow}>
-        <View style={styles.dividerLine} />
-        <Text style={styles.dividerText}>Continue with</Text>
-        <View style={styles.dividerLine} />
-      </View>
-
-      <View style={styles.socialRow}>
-        <TouchableOpacity style={styles.socialButton} onPress={handleGoogleLogin}>
+    <KeyboardAvoidingView
+      style={styles.flex}
+      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+    >
+      <ScrollView
+        contentContainerStyle={styles.scrollContent}
+        keyboardShouldPersistTaps="handled"
+      >
+        <View style={styles.container}>
           <Image
-            source={{ uri: 'https://developers.google.com/identity/images/g-logo.png' }}
-            style={styles.socialIcon}
+            source={require('../../../../../assets/images/logo.jpg')}
+            style={styles.logo}
           />
-          <Text style={styles.socialText}>Gmail</Text>
-        </TouchableOpacity>
+          <Text style={styles.appName}>Alot Mahay</Text>
+          <Text style={styles.subtitle}>Queue Management System</Text>
 
-        <TouchableOpacity style={styles.socialButton} onPress={handleFacebookLogin}>
-          <Text style={[styles.socialIconText, { color: '#1877F2' }]}>f</Text>
-          <Text style={styles.socialText}>Facebook</Text>
-        </TouchableOpacity>
-      </View>
-    </View>
+          {error ? (
+            <View style={styles.errorBox}>
+              <Ionicons name="alert-circle" size={16} color={theme.colors.danger} style={{ marginRight: 6 }} />
+              <Text style={styles.errorText}>{error}</Text>
+            </View>
+          ) : null}
+
+          <Text style={styles.label}>Email</Text>
+          <TextInput
+            style={styles.input}
+            placeholder="Enter your email"
+            placeholderTextColor={theme.colors.textMuted}
+            keyboardType="email-address"
+            autoCapitalize="none"
+            value={email}
+            onChangeText={setEmail}
+            editable={!loading}
+          />
+
+          <Text style={styles.label}>Password</Text>
+          <View style={styles.passwordRow}>
+            <TextInput
+              style={[styles.input, styles.passwordInput]}
+              placeholder="Enter your password"
+              placeholderTextColor={theme.colors.textMuted}
+              secureTextEntry={!showPassword}
+              value={password}
+              onChangeText={setPassword}
+              editable={!loading}
+            />
+            <TouchableOpacity
+              style={styles.eyeButton}
+              onPress={() => setShowPassword(!showPassword)}
+            >
+              <Ionicons
+                name={showPassword ? 'eye-off-outline' : 'eye-outline'}
+                size={20}
+                color={theme.colors.textSecondary}
+              />
+            </TouchableOpacity>
+          </View>
+
+          <Button
+            label={loading ? 'Logging in...' : 'Login'}
+            onPress={handleLogin}
+            loading={loading}
+            variant="primary"
+            style={styles.loginButton}
+          />
+
+          <TouchableOpacity onPress={() => navigation.navigate('Register')} disabled={loading}>
+            <Text style={styles.link}>Don't have an account? Register here</Text>
+          </TouchableOpacity>
+
+          <View style={styles.demoSection}>
+            <Text style={styles.demoTitle}>Demo Accounts</Text>
+            <TouchableOpacity
+              style={styles.demoAccount}
+              onPress={() => { setEmail('customer@test.com'); setPassword('123456'); }}
+            >
+              <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                <Ionicons name="person-outline" size={16} color={theme.colors.navy} style={{ marginRight: 6 }} />
+                <Text style={styles.demoRole}>Customer</Text>
+              </View>
+              <Text style={styles.demoEmail}>customer@test.com</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.demoAccount}
+              onPress={() => { setEmail('staff@test.com'); setPassword('123456'); }}
+            >
+              <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                <Ionicons name="cut-outline" size={16} color={theme.colors.royalBlue} style={{ marginRight: 6 }} />
+                <Text style={styles.demoRole}>Staff</Text>
+              </View>
+              <Text style={styles.demoEmail}>staff@test.com</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.demoAccount}
+              onPress={() => { setEmail('admin@test.com'); setPassword('123456'); }}
+            >
+              <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                <Ionicons name="shield-checkmark-outline" size={16} color="#334155" style={{ marginRight: 6 }} />
+                <Text style={styles.demoRole}>Admin</Text>
+              </View>
+              <Text style={styles.demoEmail}>admin@test.com</Text>
+            </TouchableOpacity>
+            <Text style={styles.demoHint}>Password for all: 123456</Text>
+          </View>
+        </View>
+      </ScrollView>
+    </KeyboardAvoidingView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: theme.spacing.lg, justifyContent: 'center', backgroundColor: theme.colors.background },
+  flex: { flex: 1 },
+  scrollContent: { flexGrow: 1 },
+  container: {
+    flex: 1,
+    padding: theme.spacing.lg,
+    justifyContent: 'center',
+    backgroundColor: theme.colors.background,
+  },
   logo: {
-    width: 100,
-    height: 100,
-    borderRadius: 50,
+    width: 90,
+    height: 90,
+    borderRadius: 45,
     alignSelf: 'center',
-    marginBottom: theme.spacing.sm,
+    marginBottom: theme.spacing.md,
   },
   appName: {
     ...theme.typography.h1,
     color: theme.colors.primary,
     textAlign: 'center',
     fontWeight: 'bold',
-    marginBottom: theme.spacing.xs,
   },
-  title: { ...theme.typography.h2, color: theme.colors.primary, textAlign: 'center', marginBottom: theme.spacing.xl },
+  subtitle: {
+    ...theme.typography.caption,
+    color: theme.colors.textSecondary,
+    textAlign: 'center',
+    marginBottom: theme.spacing.xl,
+  },
+  label: {
+    fontSize: 13,
+    fontWeight: '600',
+    color: theme.colors.textSecondary,
+    marginBottom: 6,
+    marginTop: theme.spacing.sm,
+  },
   input: {
     backgroundColor: theme.colors.surface,
     borderWidth: 1,
     borderColor: theme.colors.border,
     borderRadius: theme.radius.sm,
     padding: theme.spacing.md,
-    marginBottom: theme.spacing.md,
+    fontSize: 15,
     color: theme.colors.textPrimary,
+    marginBottom: theme.spacing.sm,
   },
-  optionsRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: theme.spacing.md,
+  passwordRow: { position: 'relative' },
+  passwordInput: { paddingRight: 50 },
+  eyeButton: {
+    position: 'absolute',
+    right: 14,
+    top: 14,
   },
-  rememberContainer: { flexDirection: 'row', alignItems: 'center' },
-  checkbox: {
-    width: 20,
-    height: 20,
-    borderWidth: 1.5,
-    borderColor: theme.colors.border,
-    borderRadius: 4,
-    marginRight: 8,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: theme.colors.surface,
-  },
-  checkboxChecked: {
-    backgroundColor: theme.colors.primary,
-    borderColor: theme.colors.primary,
-  },
-  checkmark: { color: theme.colors.white, fontSize: 13, fontWeight: 'bold' },
-  rememberText: { color: theme.colors.textPrimary },
-  forgotLink: { color: theme.colors.primaryLight || theme.colors.primary, fontWeight: '600' },
-  button: {
-    backgroundColor: theme.colors.primary,
+  eyeIcon: { fontSize: 18 },
+  errorBox: {
+    backgroundColor: theme.colors.danger + '15',
     borderRadius: theme.radius.sm,
-    paddingVertical: 14,
-    alignItems: 'center',
-    marginTop: theme.spacing.sm,
-  },
-  buttonText: { color: theme.colors.white, fontWeight: '600' },
-  link: {
-    color: theme.colors.primaryLight || theme.colors.primary,
-    textAlign: 'center',
-    marginTop: theme.spacing.md,
-    fontWeight: '600',
-  },
-  dividerRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginTop: theme.spacing.lg,
+    padding: theme.spacing.md,
     marginBottom: theme.spacing.md,
+    borderLeftWidth: 3,
+    borderLeftColor: theme.colors.danger,
   },
-  dividerLine: {
-    display: 'none',
-  },
-  dividerText: {
-    marginHorizontal: theme.spacing.sm,
-    color: theme.colors.textSecondary,
+  errorText: {
+    color: theme.colors.danger,
     fontSize: 13,
     fontWeight: '500',
   },
-  socialRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    width: '100%',
+  loginButton: {
+    marginTop: theme.spacing.md,
+    marginBottom: theme.spacing.md,
   },
-  socialButton: {
-    flex: 1,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
+  link: {
+    color: theme.colors.primaryLight,
+    textAlign: 'center',
+    fontWeight: '600',
+    marginBottom: theme.spacing.lg,
+  },
+  demoSection: {
     backgroundColor: theme.colors.surface,
+    borderRadius: theme.radius.lg,
+    padding: theme.spacing.lg,
+    marginTop: theme.spacing.md,
     borderWidth: 1,
     borderColor: theme.colors.border,
-    borderRadius: theme.radius.sm,
-    paddingVertical: 12,
-    marginHorizontal: 4,
-    minWidth: 0,
   },
-  socialIcon: { width: 18, height: 18, marginRight: 8 },
-  socialIconText: { fontSize: 18, fontWeight: 'bold', marginRight: 8 },
-  socialText: { fontWeight: '500', color: theme.colors.textPrimary },
+  demoTitle: {
+    ...theme.typography.caption,
+    color: theme.colors.textSecondary,
+    fontWeight: '700',
+    textTransform: 'uppercase',
+    letterSpacing: 1,
+    marginBottom: theme.spacing.md,
+    textAlign: 'center',
+  },
+  demoAccount: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingVertical: theme.spacing.sm,
+    borderBottomWidth: 1,
+    borderBottomColor: theme.colors.border,
+  },
+  demoRole: {
+    fontWeight: '600',
+    color: theme.colors.textPrimary,
+    fontSize: 14,
+  },
+  demoEmail: {
+    color: theme.colors.primaryLight,
+    fontSize: 13,
+  },
+  demoHint: {
+    ...theme.typography.caption,
+    color: theme.colors.textMuted,
+    textAlign: 'center',
+    marginTop: theme.spacing.sm,
+  },
 });

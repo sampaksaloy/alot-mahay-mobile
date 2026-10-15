@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { NavigationContainer, DefaultTheme } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import AuthStack from './AuthStack';
@@ -6,6 +6,9 @@ import CustomerStack from './CustomerStack';
 import StaffStack from './StaffStack';
 import AdminStack from './AdminStack';
 import { theme } from '../core/theme/theme';
+import { getStoredUser } from '../core/storage/localStorage';
+import { ROLES } from '../core/constants/strings';
+import LoadingIndicator from '../components/LoadingIndicator';
 
 const RootStack = createNativeStackNavigator();
 
@@ -21,13 +24,39 @@ const appTheme = {
   },
 };
 
-// Root navigator: nag-decide asa nga role-stack ang i-mount base sa login.
-// Ang LoginScreen mo-call og navigation.replace('CustomerStack' | 'StaffStack' | 'AdminStack')
-// human successful login (tan-awa sa features/auth/presentation/screens/LoginScreen.js).
+// Root navigator: checks for existing session on startup
+// and routes to the correct role-based stack.
 export default function AppNavigator() {
+  const [initialRoute, setInitialRoute] = useState(null);
+  const [checking, setChecking] = useState(true);
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const user = await getStoredUser();
+        if (user && user.role) {
+          if (user.role === ROLES.ADMIN) setInitialRoute('AdminStack');
+          else if (user.role === ROLES.STAFF) setInitialRoute('StaffStack');
+          else setInitialRoute('CustomerStack');
+        } else {
+          setInitialRoute('AuthStack');
+        }
+      } catch {
+        setInitialRoute('AuthStack');
+      } finally {
+        setChecking(false);
+      }
+    })();
+  }, []);
+
+  if (checking) return <LoadingIndicator />;
+
   return (
     <NavigationContainer theme={appTheme}>
-      <RootStack.Navigator screenOptions={{ headerShown: false }}>
+      <RootStack.Navigator
+        initialRouteName={initialRoute}
+        screenOptions={{ headerShown: false }}
+      >
         <RootStack.Screen name="AuthStack" component={AuthStack} />
         <RootStack.Screen name="CustomerStack" component={CustomerStack} />
         <RootStack.Screen name="StaffStack" component={StaffStack} />
@@ -36,4 +65,3 @@ export default function AppNavigator() {
     </NavigationContainer>
   );
 }
-

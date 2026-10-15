@@ -1,34 +1,23 @@
+import { mockDataStore } from '../../../../core/data/mockDataStore';
 
-
-const MOCK_DELAY = 600; // simulate network delay
+const MOCK_DELAY = 600;
 
 function delay(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
-// Simple in-memory "database" para sa mock accounts.
-const mockUsers = [
-  {
-    id: '1',
-    name: 'Juan Dela Cruz',
-    email: 'customer@test.com',
-    phone: '09171234567',
-    password: '123456',
-    role: 'CUSTOMER',
-    status: 'ACTIVE',
-  },
-];
-
 export const authRemoteDataSource = {
   async login(email, password) {
     await delay(MOCK_DELAY);
 
-    const found = mockUsers.find(
-      (u) => u.email.toLowerCase() === email.toLowerCase() && u.password === password
-    );
+    const found = mockDataStore.getUserByEmail(email);
 
-    if (!found) {
+    if (!found || found.password !== password) {
       throw new Error('Wrong email or password.');
+    }
+
+    if (found.status !== 'ACTIVE') {
+      throw new Error('Account is deactivated. Contact admin.');
     }
 
     const { password: _pw, ...userWithoutPassword } = found;
@@ -38,24 +27,34 @@ export const authRemoteDataSource = {
     };
   },
 
-  async register({ name, email, phone, password }) {
+  async register({ name, email, phone, password, role = 'CUSTOMER', staffType, specialization }) {
     await delay(MOCK_DELAY);
 
-    const exists = mockUsers.some((u) => u.email.toLowerCase() === email.toLowerCase());
+    const exists = mockDataStore.getUserByEmail(email);
     if (exists) {
       throw new Error('Email already registered.');
     }
 
-    const newUser = {
-      id: String(mockUsers.length + 1),
+    const assignedRole = (role || 'CUSTOMER').toUpperCase();
+
+    const newUser = mockDataStore.addUser({
       name,
       email,
       phone,
       password,
-      role: 'CUSTOMER',
-      status: 'ACTIVE',
-    };
-    mockUsers.push(newUser);
+      role: assignedRole,
+    });
+
+    if (assignedRole === 'STAFF') {
+      mockDataStore.addStaff({
+        userId: newUser.id,
+        name,
+        staffType: staffType || 'Barber',
+        specialization: specialization || 'Haircut, Grooming',
+        status: 'AVAILABLE',
+        avatar: null,
+      });
+    }
 
     const { password: _pw, ...userWithoutPassword } = newUser;
     return { user: userWithoutPassword };
@@ -66,9 +65,12 @@ export const authRemoteDataSource = {
     return {};
   },
 
-  async me() {
+  async me(userId) {
     await delay(200);
-    const found = mockUsers[0];
+    const found = userId
+      ? mockDataStore.getUserById(userId)
+      : mockDataStore.getUsers()[0];
+    if (!found) throw new Error('User not found');
     const { password: _pw, ...userWithoutPassword } = found;
     return userWithoutPassword;
   },

@@ -1,4 +1,5 @@
 import React from 'react';
+import { Platform } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Ionicons } from '@expo/vector-icons';
 import CustomerDashboardScreen from '../features/customer/presentation/screens/CustomerDashboardScreen';
@@ -11,11 +12,11 @@ import { theme } from '../core/theme/theme';
 const Tab = createBottomTabNavigator();
 
 const ICONS = {
-  Dashboard: 'home',
-  Services: 'cut',
-  MyQueue: 'time',
-  Notifications: 'notifications',
-  Profile: 'person',
+  Home: { active: 'home', inactive: 'home-outline' },
+  Services: { active: 'cut', inactive: 'cut-outline' },
+  MyQueue: { active: 'time', inactive: 'time-outline' },
+  Notifications: { active: 'notifications', inactive: 'notifications-outline' },
+  Profile: { active: 'person', inactive: 'person-outline' },
 };
 
 export default function CustomerTabs() {
@@ -29,24 +30,34 @@ export default function CustomerTabs() {
           elevation: 2,
         },
         headerTitleStyle: {
-          color: theme.colors.primary,
+          color: theme.colors.navy,
           fontWeight: '700',
         },
-        tabBarActiveTintColor: theme.colors.primaryLight || theme.colors.primary,
+        tabBarActiveTintColor: theme.colors.royalBlue,
         tabBarInactiveTintColor: theme.colors.textSecondary,
         tabBarStyle: {
           backgroundColor: theme.colors.surface,
           borderTopColor: theme.colors.border,
+          borderTopWidth: 1,
+          height: Platform.OS === 'ios' ? 84 : 72,
+          paddingBottom: Platform.OS === 'ios' ? 24 : 14,
+          paddingTop: 8,
         },
-        tabBarIcon: ({ color, size }) => (
-          <Ionicons name={ICONS[route.name]} color={color} size={size} />
-        ),
+        tabBarLabelStyle: {
+          fontSize: 11,
+          fontWeight: '600',
+        },
+        tabBarIcon: ({ color, focused, size }) => {
+          const iconPair = ICONS[route.name] || { active: 'ellipse', inactive: 'ellipse-outline' };
+          const iconName = focused ? iconPair.active : iconPair.inactive;
+          return <Ionicons name={iconName} color={color} size={22} />;
+        },
       })}
     >
       <Tab.Screen
-        name="Dashboard"
+        name="Home"
         component={CustomerDashboardScreen}
-        options={{ title: 'Dashboard' }}
+        options={{ headerShown: false, tabBarLabel: 'Home' }}
       />
       <Tab.Screen
         name="Services"
@@ -61,7 +72,7 @@ export default function CustomerTabs() {
       <Tab.Screen
         name="Notifications"
         component={NotificationsScreen}
-        options={{ title: 'Notifications' }}
+        options={{ title: 'Alerts' }}
       />
       <Tab.Screen
         name="Profile"
@@ -70,4 +81,4 @@ export default function CustomerTabs() {
       />
     </Tab.Navigator>
   );
-}
+}
